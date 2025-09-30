@@ -1,3 +1,11 @@
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/Analizador.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/Automata.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/ErrorLexico.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/EscanerLexico.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/ReconocedorLexico.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/TablaRL.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/TipoToken.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/Token.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/ui/EditorPanel.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/ui/PestañaPrincipal.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/util/Colores.java
