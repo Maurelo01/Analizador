@@ -1,16 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
-
 package com.mycompany.analizador;
 
-/**
- *
- * @author mauricio
- */
-public class Analizador {
+import javax.swing.SwingUtilities;
 
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
+public class Analizador 
+{
+    public static void main(String[] args) 
+    {   
+        SwingUtilities.invokeLater(() -> new com.mycompany.analizador.ui.PestañaPrincipal().setVisible(true));
     }
 }
