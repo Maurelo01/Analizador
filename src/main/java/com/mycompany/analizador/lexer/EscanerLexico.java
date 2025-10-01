@@ -85,23 +85,112 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
                 int regreso = j - (ultimoAceptIdx + 1);
                 while (regreso-- > 0)
                 {
-                    char c = texto.charAt(--j);
+                    char cR = texto.charAt(--j);
                 }
                 String lexema = lex.substring(0, (ultimoAceptIdx - i) + 1);
-                if (tipoAcept != null) // Si el token fue espacios no se emite
+                if (tipoAcept == null || tipoAcept == TipoToken.COMENTARIO)
                 {
-                    if (tipoAcept == TipoToken.IDENTIFICADOR && esReservada(lexema))
+                    // no emitir token solo avanzar
+                }
+                else if (tipoAcept == TipoToken.IDENTIFICADOR && esReservada(lexema))
+                {
+                    Token t = new Token(TipoToken.RESERVADA, lexema, inicioFila, inicioCol);
+                    r.tokens.add(t);
+                    if (listener != null) listener.onToken(t);
+                }
+                else if (tipoAcept == TipoToken.OPERADOR && "/".equals(lexema)) 
+                {
+                    if (j < texto.length()) 
                     {
-                        Token t = new Token(TipoToken.RESERVADA, lexema, inicioFila, inicioCol);
+                        char next = texto.charAt(j);
+                        if (next == '/') 
+                        {
+                            // Comentario de linea consumir hasta \n y no emitir token
+                            while (j < texto.length() && texto.charAt(j) != '\n') 
+                            { 
+                                j++; 
+                            }
+                            i = j; // continuar desde el fin del comentario
+                            continue; // saltar emision
+                        } 
+                        else if (next == '*') 
+                        {
+                            // Comentario de bloque consumir hasta */ si existe
+                            int k = j + 1; // ya vimos /* se busca cierre
+                            boolean cerrado = false;
+                            while (k < texto.length()) 
+                            {
+                                char cprev = texto.charAt(k - 1);
+                                char ccur  = texto.charAt(k);
+                                if (cprev == '*' && ccur == '/') 
+                                {
+                                    cerrado = true;
+                                    k++; 
+                                    break; 
+                                }
+                                k++;
+                            }
+                            if (!cerrado)
+                            {
+                                r.errores.add(new ErrorLexico("/", inicioFila, inicioCol, "Comentario de bloque sin cerrar"));
+                                if (listener != null) listener.onError(r.errores.get(r.errores.size()-1));
+                                i = texto.length();
+                                break;
+                            } 
+                            else 
+                            {
+                                i = k;
+                                continue;
+                            }
+                        }
+                    }
+                }
+                else if (tipoAcept == TipoToken.NUMERO) 
+                {
+                    if (j < texto.length() && texto.charAt(j) == '.') 
+                    {
+                        // Si no hay digito despues del punto es error
+                        if (j + 1 >= texto.length() || !Character.isDigit(texto.charAt(j + 1))) 
+                        {
+                            r.errores.add(new ErrorLexico(".", fila, col, "Decimal incompleto"));
+                            if (listener != null) listener.onError(r.errores.get(r.errores.size()-1));
+                            i = j + 1;
+                            continue;
+                        }
+                    }
+                }
+                else if (tipoAcept == TipoToken.PUNTUACION && ".".equals(lexema))
+                {
+                    boolean p1 = (j < texto.length()) && texto.charAt(j) == '.';
+                    boolean p2 = (j + 1 < texto.length()) && texto.charAt(j + 1) == '.';
+                    if (p1 && p2) 
+                    {
+                        // formar un token con lexema ...
+                        lexema = "...";
+                        // consumir 2 puntos adicionales de entrada
+                        i = j + 2; // saltam los dos . extra
+                        col += 2; // avance aproximado de columna
+                        Token t = new Token(TipoToken.PUNTUACION, lexema, inicioFila, inicioCol);
                         r.tokens.add(t);
                         if (listener != null) listener.onToken(t);
+                        continue;
                     }
-                    else if (tipoAcept != null)
+                    if (j < texto.length() && Character.isDigit(texto.charAt(j))) 
                     {
-                        Token t = new Token(tipoAcept, lexema, inicioFila, inicioCol);
-                        r.tokens.add(t);
-                        if (listener != null) listener.onToken(t);
+                        r.errores.add(new ErrorLexico(".", fila, col, "Formato decimal inválido"));
+                        if (listener != null) listener.onError(r.errores.get(r.errores.size()-1));
+                        i = ultimoAceptIdx + 1;
+                        continue;
                     }
+                    Token t = new Token(TipoToken.PUNTUACION, lexema, inicioFila, inicioCol);
+                    r.tokens.add(t);
+                    if (listener != null) listener.onToken(t);
+                }
+                else
+                {
+                    Token t = new Token(tipoAcept, lexema, inicioFila, inicioCol);
+                    r.tokens.add(t);
+                    if (listener != null) listener.onToken(t);
                 }
                 i = ultimoAceptIdx + 1; // continuar despues del ultimo aceptado
             }
@@ -117,15 +206,61 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
                 }
                 else
                 {
-                    ErrorLexico err = new ErrorLexico(String.valueOf(c), fila, col, "Símbolo no reconocido");
+                    String desc = "Símbolo no reconocido";
+                    if (c == '\"') 
+                    {
+                        desc = "Cadena sin cerrar";
+                        // saltar hasta fin de cadena o salto de linea
+                        int k = i + 1;
+                        while (k < texto.length()) 
+                        {
+                            char ck = texto.charAt(k);
+                            if (ck == '\n') 
+                            { 
+                                k++; 
+                                break; 
+                            } // si es comilla se consume
+                            k++;
+                        }
+                        r.errores.add(new ErrorLexico(String.valueOf(c), fila, col, desc));
+                        if (listener != null) listener.onError(r.errores.get(r.errores.size()-1));
+                        // avanza i al punto sincronizado y actualiza fila/col
+                        while (i < k) 
+                        {
+                            char adv = texto.charAt(i++);
+                            if (adv == '\n') 
+                            { 
+                                fila++; col = 1; 
+                            } 
+                            else if (adv == '\t') 
+                            { 
+                                col += 4; 
+                            } 
+                            else 
+                            { 
+                                col++; 
+                            }
+                        }
+                        continue;
+                    }
+                    else if (c == '/' && i+1 < texto.length() && texto.charAt(i+1) == '*')
+                    {
+                        desc = "Comentario de bloque sin cerrar";
+                        ErrorLexico err = new ErrorLexico(String.valueOf(c), fila, col, desc);
+                        r.errores.add(err);
+                        if (listener != null) listener.onError(err);
+                        i = texto.length();
+                        break;
+                    }
+                    ErrorLexico err = new ErrorLexico(String.valueOf(c), fila, col, desc);
                     r.errores.add(err);
                     if (listener != null) listener.onError(err);
+                    // avanzar un caracter
+                    if (c == '\n') { fila++; col = 1; }
+                    else if (c == '\t') { col += 4; }
+                    else { col++; }
+                    i++;
                 }
-                // avanzar un caracter
-                if (c == '\n') { fila++; col = 1; }
-                else if (c == '\t') { col += 4; }
-                else { col++; }
-                i++;
             }
         }
         return r;
