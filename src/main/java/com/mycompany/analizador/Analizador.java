@@ -1,5 +1,4 @@
 package com.mycompany.analizador;
-
 import javax.swing.SwingUtilities;
 
 public class Analizador 

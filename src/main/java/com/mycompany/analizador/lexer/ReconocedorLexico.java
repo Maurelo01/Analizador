@@ -19,8 +19,8 @@ public class ReconocedorLexico implements Automata
     public static int clasificar(char c)
     {
         if (Character.isWhitespace(c)) return C_ESPACIO;
-        if (Character.isLetter(c))     return C_LETRA;
-        if (Character.isDigit(c))      return C_DIGITO;
+        if (Character.isLetter(c)) return C_LETRA;
+        if (Character.isDigit(c)) return C_DIGITO;
         switch (c)
         {
             case '+': case '-': case '*': case '/': case '%': case '=': return C_OPERADOR;
@@ -50,6 +50,10 @@ public class ReconocedorLexico implements Automata
     public boolean transitar(char c) 
     {
         int clase = clasificar(c);
+        if (estado < 0 || estado >= transicion.length)
+        {
+            return false;
+        }
         if (clase < 0 || clase >= transicion[estado].length) 
         {
             return false; // clase fuera de rango
@@ -66,7 +70,7 @@ public class ReconocedorLexico implements Automata
     @Override
     public boolean estaEnAceptacion() 
     {
-        return aceptacion[estado];
+        return (estado >= 0 && estado < aceptacion.length) && aceptacion[estado];
     }
 
     @Override
@@ -78,7 +82,13 @@ public class ReconocedorLexico implements Automata
     @Override
     public TipoToken tipoDeEstadoActual() 
     {
-        return tipoPorEstado[estado];
+        if (estado >= 0 && estado < tipoPorEstado.length) return tipoPorEstado[estado];
+        return null;
     }
     
+    public TipoToken tipoDeAceptacion(int estado) 
+    {
+        if (estado >= 0 && estado < tipoPorEstado.length) return tipoPorEstado[estado];
+        return null;
+    }
 }
