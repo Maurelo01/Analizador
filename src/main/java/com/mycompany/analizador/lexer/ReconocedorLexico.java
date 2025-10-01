@@ -18,15 +18,20 @@ public class ReconocedorLexico implements Automata
     
     public static int clasificar(char c)
     {
-        if (Character.isWhitespace(c)) return C_ESPACIO;
+        if (c == '\n') return C_SALTO;                
+        if (c == '\t' || c == ' ' || c == '\r') return C_ESPACIO;
         if (Character.isLetter(c)) return C_LETRA;
         if (Character.isDigit(c)) return C_DIGITO;
         switch (c)
         {
-            case '+': case '-': case '*': case '/': case '%': case '=': return C_OPERADOR;
+            case '+': case '-': case '%': case '=': return C_OPERADOR;
             case '(': case ')': case '[': case ']': case '{': case '}': return C_AGRUP;
-            case '.': case ',': case ';': case ':': return C_PUNT;
-            case '\"': return C_COMILLA;
+            case ',': case ';': case ':': return C_PUNT;
+            case '"': return C_COMILLA;
+            case '/': return C_SLASH;
+            case '.': return C_PUNTO;
+            case '*': return C_ASTERISCO;
+            case '\\': return C_BACKSLASH;
             default: return C_OTRO;
         }
     }
@@ -34,11 +39,16 @@ public class ReconocedorLexico implements Automata
     public static final int C_ESPACIO = 0; // espacios en blanco
     public static final int C_LETRA = 1; // a-z A-Z
     public static final int C_DIGITO = 2; // 0-9
-    public static final int C_OPERADOR = 3; // + - * / % =
+    public static final int C_OPERADOR = 3; // + - % =
     public static final int C_AGRUP = 4; // ( ) [ ] { }
     public static final int C_PUNT = 5; // . , ; :
     public static final int C_COMILLA = 6; // "
     public static final int C_OTRO = 7; // cualquier otro
+    public static final int C_SLASH = 8; // /
+    public static final int C_PUNTO = 9; // . para decimales
+    public static final int C_ASTERISCO = 10; // *
+    public static final int C_SALTO = 11; // \n
+    public static final int C_BACKSLASH = 12; // \
     
     @Override
     public void reiniciar() 
