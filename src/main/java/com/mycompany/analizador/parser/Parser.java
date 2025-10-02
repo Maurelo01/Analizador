@@ -33,12 +33,16 @@ public class Parser
                 programa.agregarSentencia(sentencia);
             }
 
-            // Aceptamos ';' opcional como separador
+            // Aceptado ; opcional como separador
             if (flujo.revisar() != null && ";".equals(flujo.revisar().getLexema())) 
             {
                 flujo.consumir();
             }
-            if (flujo.revisar() == null) break; // EOF
+            if (flujo.revisar() != null && flujo.revisar().getTipo() == TipoToken.PUNTUACION && "...".equals(flujo.revisar().getLexema())) 
+            {
+                flujo.consumir(); 
+            }
+            if (flujo.revisar() == null) break; 
         }
 
         return programa;
@@ -48,7 +52,12 @@ public class Parser
     {
         Token t = flujo.revisar();
         if (t == null) return null;
-
+        // 0) omitir
+        if (t.getTipo() == TipoToken.PUNTUACION && "...".equals(t.getLexema()))
+        {
+            flujo.consumir();
+            return null; 
+        }
         // 1) Bloque
         if ("{".equals(t.getLexema())) 
         {
