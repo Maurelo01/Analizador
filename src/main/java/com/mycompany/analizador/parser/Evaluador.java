@@ -59,6 +59,16 @@ public class Evaluador
             for (Stmt h : ((StmtBloque) s).getSentencias()) ejecutarStmt(h, salida);
             return;
         }
+        
+        if (s instanceof StmtExpr) 
+        {
+            Expr e = ((StmtExpr) s).getExpr();
+            if (!(e instanceof ExprIdent)) 
+            {
+                eval(e, salida);
+            }
+            return;
+        }
 
         if (s instanceof StmtSi) 
         {

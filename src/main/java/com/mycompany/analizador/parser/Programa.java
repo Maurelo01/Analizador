@@ -75,6 +75,23 @@ class StmtEscribir extends Stmt // Escribir(expr)
     }
 }
 
+    class StmtExpr extends Stmt 
+    {
+        private final Expr expr;
+        public StmtExpr(Expr expr) 
+        {
+            this.expr = expr; 
+        }
+        public Expr getExpr() 
+        { 
+            return expr;
+        }
+        @Override public String toString() 
+        { 
+            return "ExprStmt(" + expr + ")"; 
+        }
+    }
+
 class StmtBloque extends Stmt 
 {
     private final java.util.List<Stmt> sentencias = new java.util.ArrayList<>();

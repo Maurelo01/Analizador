@@ -78,6 +78,15 @@ public class ParserUI
             nivel--;
             return;
         }
+        if (s instanceof StmtExpr) 
+        {
+            StmtExpr se = (StmtExpr) s;
+            linea("ExprStmt");
+            nivel++;
+            imprimirExpr(se.getExpr());
+            nivel--;
+            return;
+        }
         if (s instanceof StmtPara) 
         {
             StmtPara p = (StmtPara) s;
