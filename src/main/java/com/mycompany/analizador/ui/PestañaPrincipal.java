@@ -17,6 +17,8 @@ public class PestañaPrincipal extends javax.swing.JFrame
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PestañaPrincipal.class.getName());
     private boolean mostrarTraza = false;
     private Colorizador colorizador;
+    private BuscadorTexto buscador;
+    private PanelBusqueda panelBusqueda;
     
     public PestañaPrincipal() 
     {
@@ -25,11 +27,14 @@ public class PestañaPrincipal extends javax.swing.JFrame
         setLocationRelativeTo(null);
         panelPlaceholder.setLayout(new java.awt.BorderLayout());
         editorPanel = new EditorPanel();
+        buscador = new BuscadorTexto(editorPanel.getComponenteTexto());
+        panelBusqueda = new PanelBusqueda(buscador);
         panelPlaceholder.add(editorPanel, java.awt.BorderLayout.CENTER);
         colorizador = new Colorizador(editorPanel.getComponenteTexto());
         splitEditorConsola.setResizeWeight(0.8);
         splitPrincipal.setResizeWeight(0.9);
         getContentPane().add(splitPrincipal, java.awt.BorderLayout.CENTER);
+        getContentPane().add(panelBusqueda, java.awt.BorderLayout.SOUTH);
     }
     
     private void abrirArchivo()
@@ -200,6 +205,8 @@ public class PestañaPrincipal extends javax.swing.JFrame
         menuMostrarTraza = new javax.swing.JCheckBoxMenuItem();
         menuAnalisis = new javax.swing.JMenu();
         menuAnalizar = new javax.swing.JMenuItem();
+        menuEditar = new javax.swing.JMenu();
+        itemBuscar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(430, 340));
@@ -306,6 +313,20 @@ public class PestañaPrincipal extends javax.swing.JFrame
 
         jMenuBar1.add(menuAnalisis);
 
+        menuEditar.setText("Editar");
+
+        itemBuscar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        itemBuscar.setText("Buscar (Ctrl+F)");
+        itemBuscar.setToolTipText("Abrir panel de búsqueda");
+        itemBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemBuscarActionPerformed(evt);
+            }
+        });
+        menuEditar.add(itemBuscar);
+
+        jMenuBar1.add(menuEditar);
+
         setJMenuBar(jMenuBar1);
 
         pack();
@@ -341,9 +362,15 @@ public class PestañaPrincipal extends javax.swing.JFrame
         mostrarTraza = menuMostrarTraza.isSelected();
     }//GEN-LAST:event_menuMostrarTrazaActionPerformed
 
+    private void itemBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemBuscarActionPerformed
+        panelBusqueda.setVisible(true);
+        panelBusqueda.enfocar();
+    }//GEN-LAST:event_itemBuscarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnalizar;
     private javax.swing.JTextArea consolaArea;
+    private javax.swing.JMenuItem itemBuscar;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -352,6 +379,7 @@ public class PestañaPrincipal extends javax.swing.JFrame
     private javax.swing.JMenu menuAnalisis;
     private javax.swing.JMenuItem menuAnalizar;
     private javax.swing.JMenu menuArchivo;
+    private javax.swing.JMenu menuEditar;
     private javax.swing.JMenuItem menuGuardar;
     private javax.swing.JMenuItem menuLimpiarConsola;
     private javax.swing.JMenuItem menuLimpiarResultados;
