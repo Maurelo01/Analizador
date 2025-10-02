@@ -13,6 +13,7 @@ com/mycompany/analizador/ui/BuscadorTexto.class
 com/mycompany/analizador/ui/util/RecuentoLexemas$1.class
 com/mycompany/analizador/parser/StmtExpr.class
 com/mycompany/analizador/parser/ExprCadena.class
+com/mycompany/analizador/debug/VisualizadorAutomata.class
 com/mycompany/analizador/util/GestorSugerencias.class
 com/mycompany/analizador/ui/util/RecuentoLexemas.class
 com/mycompany/analizador/ui/PanelBusqueda$1.class
@@ -20,6 +21,7 @@ com/mycompany/analizador/ui/PestañaPrincipal$7.class
 com/mycompany/analizador/ui/DialogoReporte$7.class
 com/mycompany/analizador/parser/Parser.class
 com/mycompany/analizador/ui/PestañaPrincipal$4.class
+com/mycompany/analizador/debug/DialogoDepuracion$6.class
 com/mycompany/analizador/ui/DialogoReporte.class
 com/mycompany/analizador/lexer/Traza.class
 com/mycompany/analizador/ui/Colorizador$1.class

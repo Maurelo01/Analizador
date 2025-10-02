@@ -125,6 +125,53 @@ public class DepuradorModelo
             if (!ok) break;
         }
     }
+    
+    public static String etiquetaChar(char c) 
+    {
+        switch (c) 
+        {
+            case ' '  : return "␠";
+            case '\n' : return "↵";
+            case '\t' : return "⇥";
+            case '\r' : return "␍";
+            default   : return String.valueOf(c);
+        }
+    }
+    
+    public ReconocedorLexico getDfa() 
+    {
+        return (automata instanceof ReconocedorLexico) ? (ReconocedorLexico) automata : null;
+    }
+    
+    public void continuarDesde(int nuevoIndice) 
+    {
+        if (nuevoIndice < 0) nuevoIndice = 0;
+        if (nuevoIndice > entrada.length()) nuevoIndice = entrada.length();
+        automata.reiniciar();
+        idx = nuevoIndice;
+        pasos.clear();
+        lexema.setLength(0);
+        estadoActual = automata.estadoActual();
+        ultimoAceptIdx = -1;
+        ultimoAceptTipo = null;
+    }
+
+    public boolean continuarDesdeUltimaAceptacion()
+    {
+        if (ultimoAceptIdx < 0) return false;
+        continuarDesde(ultimoAceptIdx + 1);
+        return true;
+    }
+
+    public void saltarEspacios() 
+    {
+        while (idx < entrada.length()) 
+        {
+            char c = entrada.charAt(idx);
+            if (c==' ' || c=='\t' || c=='\r' || c=='\n') idx++;
+            else break;
+        }
+    }
 
     public int getEstadoActual() 
     { 
