@@ -91,16 +91,23 @@ public class Parser
         // 5) Asignacion IDENT = expresion
         if (t.getTipo() == TipoToken.IDENTIFICADOR) 
         {
-            String nombre = t.getLexema();
-            flujo.consumir(); // IDENT
-            if (!coincideLexema("=")) 
+            Token sig = flujo.revisar(1);
+
+            // a) Asignación IDENT = 
+            if (sig != null && "=".equals(sig.getLexema()))
             {
-                error(conMensaje(flujo.revisar(), "Se esperaba '=' en la asignación"));
-                sincronizarHasta(";"); 
-                return null;
+                String nombre = t.getLexema();
+                flujo.consumir(); // IDENT
+                flujo.consumir(); // =
+                Expr valor = analizarAsignacion();
+                // ; opcional
+                if (flujo.revisar()!=null && ";".equals(flujo.revisar().getLexema())) flujo.consumir();
+                return new StmtAsignar(nombre, valor);
             }
-            Expr valor = analizarExpresion();
-            return new StmtAsignar(nombre, valor);
+
+            Expr e = analizarExpresion(); 
+            if (flujo.revisar()!=null && ";".equals(flujo.revisar().getLexema())) flujo.consumir();
+            return new StmtExpr(e);
         }
 
         // 6) Error

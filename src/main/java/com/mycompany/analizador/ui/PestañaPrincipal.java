@@ -9,6 +9,9 @@ import com.mycompany.analizador.parser.Evaluador;
 import com.mycompany.analizador.parser.Parser;
 import com.mycompany.analizador.parser.ParserUI;
 import com.mycompany.analizador.parser.Programa;
+import com.mycompany.analizador.ui.util.RecuentoLexemas;
+import java.util.LinkedHashMap;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 public class PestañaPrincipal extends javax.swing.JFrame 
@@ -19,6 +22,7 @@ public class PestañaPrincipal extends javax.swing.JFrame
     private Colorizador colorizador;
     private BuscadorTexto buscador;
     private PanelBusqueda panelBusqueda;
+    private EscanerLexico.Resultado ultimoResultado;
     
     public PestañaPrincipal() 
     {
@@ -103,7 +107,7 @@ public class PestañaPrincipal extends javax.swing.JFrame
             }
             // Analizar
             EscanerLexico.Resultado res = sc.analizar(texto);
-
+            this.ultimoResultado = res;
             // Tokens
             StringBuilder sbTok = new StringBuilder();
             sbTok.append(String.format("Tokens: %d%n", res.tokens.size()));
@@ -143,6 +147,7 @@ public class PestañaPrincipal extends javax.swing.JFrame
         EscanerLexico sc = new EscanerLexico();
         sc.setAutomata(TablaRL.crear());
         EscanerLexico.Resultado res = sc.analizar(src);
+        this.ultimoResultado = res;
 
         if (!res.errores.isEmpty()) 
         {
@@ -180,7 +185,45 @@ public class PestañaPrincipal extends javax.swing.JFrame
         consolaArea.append("=== Fin ===\n");
     }
     
-    
+    private void abrirReportes() 
+    {
+        if (ultimoResultado == null) 
+        {
+            try 
+            {
+                EscanerLexico sc = new EscanerLexico();
+                sc.setAutomata(TablaRL.crear());
+                ultimoResultado = sc.analizar(editorPanel.getTexto());
+            } 
+            catch (Exception ex) 
+            {
+                JOptionPane.showMessageDialog(this, "No hay resultados para mostrar y no se pudo analizar: " + ex.getMessage(),
+                        "Reportes", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        }
+
+        // Si no hay resultado avisa
+        if (ultimoResultado == null)
+        {
+            JOptionPane.showMessageDialog(this, "Aún no hay resultados para mostrar. Ejecuta un análisis primero (F5).", "Reportes", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        // Abre el dialogo y carga datos
+        DialogoReporte dlg = new DialogoReporte(this, true);
+        dlg.setErrores(ultimoResultado.errores);
+        dlg.setTokens(ultimoResultado.tokens);
+
+        // Recuento solo si no hay errores
+        LinkedHashMap<String, Integer> recuento = null;
+        if (ultimoResultado.errores == null || ultimoResultado.errores.isEmpty())
+        {
+            recuento = RecuentoLexemas.contar(ultimoResultado.tokens, /*normaliza minusculas*/ true);
+        }
+        dlg.setRecuento(recuento);
+        dlg.setVisible(true);
+    }
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -207,6 +250,8 @@ public class PestañaPrincipal extends javax.swing.JFrame
         menuAnalizar = new javax.swing.JMenuItem();
         menuEditar = new javax.swing.JMenu();
         itemBuscar = new javax.swing.JMenuItem();
+        menuReportes = new javax.swing.JMenu();
+        menuVerReportes = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(430, 340));
@@ -327,6 +372,18 @@ public class PestañaPrincipal extends javax.swing.JFrame
 
         jMenuBar1.add(menuEditar);
 
+        menuReportes.setText("Reportes");
+
+        menuVerReportes.setText("Ver tablas y exportar");
+        menuVerReportes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuVerReportesActionPerformed(evt);
+            }
+        });
+        menuReportes.add(menuVerReportes);
+
+        jMenuBar1.add(menuReportes);
+
         setJMenuBar(jMenuBar1);
 
         pack();
@@ -367,6 +424,10 @@ public class PestañaPrincipal extends javax.swing.JFrame
         panelBusqueda.enfocar();
     }//GEN-LAST:event_itemBuscarActionPerformed
 
+    private void menuVerReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuVerReportesActionPerformed
+        abrirReportes();
+    }//GEN-LAST:event_menuVerReportesActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnalizar;
     private javax.swing.JTextArea consolaArea;
@@ -384,7 +445,9 @@ public class PestañaPrincipal extends javax.swing.JFrame
     private javax.swing.JMenuItem menuLimpiarConsola;
     private javax.swing.JMenuItem menuLimpiarResultados;
     private javax.swing.JCheckBoxMenuItem menuMostrarTraza;
+    private javax.swing.JMenu menuReportes;
     private javax.swing.JMenu menuVer;
+    private javax.swing.JMenuItem menuVerReportes;
     private javax.swing.JPanel panelPlaceholder;
     private javax.swing.JTextArea resultadosArea;
     private javax.swing.JSplitPane splitEditorConsola;
