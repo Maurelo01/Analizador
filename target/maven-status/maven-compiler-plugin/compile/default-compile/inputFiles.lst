@@ -26,3 +26,6 @@
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/ui/util/ExportadorTabla.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/ui/util/RecuentoLexemas.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/util/Colores.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/util/DistanciaEdicion.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/util/GestorSugerencias.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/util/SugeridorReservadas.java

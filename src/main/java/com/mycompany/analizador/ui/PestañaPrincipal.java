@@ -11,6 +11,8 @@ import com.mycompany.analizador.parser.Parser;
 import com.mycompany.analizador.parser.ParserUI;
 import com.mycompany.analizador.parser.Programa;
 import com.mycompany.analizador.ui.util.RecuentoLexemas;
+import com.mycompany.analizador.util.GestorSugerencias;
+import com.mycompany.analizador.util.SugeridorReservadas;
 import java.util.LinkedHashMap;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -24,6 +26,7 @@ public class PestañaPrincipal extends javax.swing.JFrame
     private BuscadorTexto buscador;
     private PanelBusqueda panelBusqueda;
     private EscanerLexico.Resultado ultimoResultado;
+    private GestorSugerencias gestorSugerencias;
     
     public PestañaPrincipal() 
     {
@@ -36,8 +39,10 @@ public class PestañaPrincipal extends javax.swing.JFrame
         panelBusqueda = new PanelBusqueda(buscador);
         panelPlaceholder.add(editorPanel, java.awt.BorderLayout.CENTER);
         colorizador = new Colorizador(editorPanel.getComponenteTexto());
+        buscador    = new BuscadorTexto(editorPanel.getComponenteTexto());
         splitEditorConsola.setResizeWeight(0.8);
         splitPrincipal.setResizeWeight(0.9);
+        gestorSugerencias = new GestorSugerencias(editorPanel.getComponenteTexto(), lexema -> SugeridorReservadas.sugerirCercana(lexema, /*umbral*/ 2, /*normalizar*/ true));
         getContentPane().add(splitPrincipal, java.awt.BorderLayout.CENTER);
         getContentPane().add(panelBusqueda, java.awt.BorderLayout.SOUTH);
     }
@@ -130,6 +135,9 @@ public class PestañaPrincipal extends javax.swing.JFrame
                 sbErr.append("\n--- TRAZA ---\n").append(traza.basura());
             }
             consolaArea.setText(sbErr.toString());
+            
+            gestorSugerencias.limpiar(); // limpia marcas previas
+            gestorSugerencias.aplicarErrores(res.errores, res.tokens, editorPanel.getTexto());
         } 
         catch (Exception ex) 
         {

@@ -3,14 +3,17 @@ com/mycompany/analizador/lexer/EscanerLexico$Resultado.class
 com/mycompany/analizador/ui/modelo/ErrorTableModel.class
 com/mycompany/analizador/ui/PanelBusqueda.class
 com/mycompany/analizador/parser/ExprUnaria.class
+com/mycompany/analizador/util/SugeridorReservadas.class
 com/mycompany/analizador/parser/Programa.class
 com/mycompany/analizador/lexer/EscanerLexico.class
+com/mycompany/analizador/util/DistanciaEdicion.class
 com/mycompany/analizador/ui/PestañaPrincipal$1.class
 com/mycompany/analizador/ui/EditorPanel.class
 com/mycompany/analizador/ui/BuscadorTexto.class
 com/mycompany/analizador/ui/util/RecuentoLexemas$1.class
 com/mycompany/analizador/parser/StmtExpr.class
 com/mycompany/analizador/parser/ExprCadena.class
+com/mycompany/analizador/util/GestorSugerencias.class
 com/mycompany/analizador/ui/util/RecuentoLexemas.class
 com/mycompany/analizador/ui/PanelBusqueda$1.class
 com/mycompany/analizador/ui/PestañaPrincipal$7.class
@@ -30,6 +33,7 @@ com/mycompany/analizador/Analizador.class
 com/mycompany/analizador/ui/util/ExportadorTabla.class
 com/mycompany/analizador/ui/PanelBusqueda$5.class
 com/mycompany/analizador/parser/FlujoToken.class
+com/mycompany/analizador/util/GestorSugerencias$Sugeridor.class
 com/mycompany/analizador/ui/PestañaPrincipal$3.class
 com/mycompany/analizador/lexer/ErrorLexico.class
 com/mycompany/analizador/ui/PanelBusqueda$2.class
@@ -38,6 +42,7 @@ com/mycompany/analizador/ui/PestañaPrincipal.class
 com/mycompany/analizador/ui/DialogoReporte$5.class
 com/mycompany/analizador/debug/DialogoDepuracion$4.class
 com/mycompany/analizador/lexer/Automata.class
+com/mycompany/analizador/util/GestorSugerencias$PintorSubrayadoOndulado.class
 com/mycompany/analizador/parser/Evaluador.class
 com/mycompany/analizador/ui/Colorizador.class
 com/mycompany/analizador/lexer/ReconocedorLexico.class
@@ -66,6 +71,7 @@ com/mycompany/analizador/parser/Expr.class
 com/mycompany/analizador/parser/Evaluador$Entorno.class
 com/mycompany/analizador/parser/StmtSi.class
 com/mycompany/analizador/ui/modelo/TokenTableModel.class
+com/mycompany/analizador/util/GestorSugerencias$1.class
 com/mycompany/analizador/ui/DialogoReporte$4.class
 com/mycompany/analizador/ui/PanelBusqueda$4.class
 com/mycompany/analizador/parser/ExprIdent.class
@@ -74,4 +80,5 @@ com/mycompany/analizador/parser/StmtBloque.class
 com/mycompany/analizador/debug/DialogoDepuracion$2.class
 com/mycompany/analizador/ui/DialogoReporte$1.class
 com/mycompany/analizador/debug/DialogoDepuracion$5.class
+com/mycompany/analizador/util/GestorSugerencias$RangoError.class
 com/mycompany/analizador/ui/PestañaPrincipal$8.class
