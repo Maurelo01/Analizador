@@ -1,3 +1,4 @@
+com/mycompany/analizador/debug/DepuradorModelo.class
 com/mycompany/analizador/lexer/EscanerLexico$Resultado.class
 com/mycompany/analizador/ui/modelo/ErrorTableModel.class
 com/mycompany/analizador/ui/PanelBusqueda.class
@@ -21,6 +22,7 @@ com/mycompany/analizador/lexer/Traza.class
 com/mycompany/analizador/ui/Colorizador$1.class
 com/mycompany/analizador/parser/StmtPara.class
 com/mycompany/analizador/parser/ExprParen.class
+com/mycompany/analizador/debug/DialogoDepuracion$3.class
 com/mycompany/analizador/parser/ExprBinaria.class
 com/mycompany/analizador/ui/DialogoReporte$3.class
 com/mycompany/analizador/parser/Stmt.class
@@ -34,6 +36,7 @@ com/mycompany/analizador/ui/PanelBusqueda$2.class
 com/mycompany/analizador/ui/DialogoReporte$6.class
 com/mycompany/analizador/ui/PestañaPrincipal.class
 com/mycompany/analizador/ui/DialogoReporte$5.class
+com/mycompany/analizador/debug/DialogoDepuracion$4.class
 com/mycompany/analizador/lexer/Automata.class
 com/mycompany/analizador/parser/Evaluador.class
 com/mycompany/analizador/ui/Colorizador.class
@@ -42,15 +45,19 @@ com/mycompany/analizador/ui/modelo/RecuentoTableModel.class
 com/mycompany/analizador/ui/PanelBusqueda$3.class
 com/mycompany/analizador/lexer/Token.class
 com/mycompany/analizador/lexer/TablaRL.class
+com/mycompany/analizador/debug/DialogoDepuracion.class
 com/mycompany/analizador/ui/PestañaPrincipal$6.class
 com/mycompany/analizador/ui/EditorPanel$1.class
 com/mycompany/analizador/ui/DialogoReporte$2.class
 com/mycompany/analizador/ui/PestañaPrincipal$2.class
 com/mycompany/analizador/parser/ExprAsign.class
 com/mycompany/analizador/parser/StmtAsignar.class
+com/mycompany/analizador/debug/DepuradorModelo$Paso.class
 com/mycompany/analizador/parser/StmtEscribir.class
 com/mycompany/analizador/ui/PestañaPrincipal$9.class
 com/mycompany/analizador/parser/ParserUI.class
+com/mycompany/analizador/debug/DialogoDepuracion$1.class
+com/mycompany/analizador/ui/PestañaPrincipal$10.class
 com/mycompany/analizador/ui/PestañaPrincipal$5.class
 com/mycompany/analizador/lexer/TipoToken.class
 com/mycompany/analizador/parser/ExprNumero.class
@@ -64,5 +71,7 @@ com/mycompany/analizador/ui/PanelBusqueda$4.class
 com/mycompany/analizador/parser/ExprIdent.class
 com/mycompany/analizador/util/Colores.class
 com/mycompany/analizador/parser/StmtBloque.class
+com/mycompany/analizador/debug/DialogoDepuracion$2.class
 com/mycompany/analizador/ui/DialogoReporte$1.class
+com/mycompany/analizador/debug/DialogoDepuracion$5.class
 com/mycompany/analizador/ui/PestañaPrincipal$8.class

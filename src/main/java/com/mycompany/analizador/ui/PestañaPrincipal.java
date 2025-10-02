@@ -1,5 +1,6 @@
 package com.mycompany.analizador.ui;
 
+import com.mycompany.analizador.debug.DialogoDepuracion;
 import com.mycompany.analizador.lexer.ErrorLexico;
 import com.mycompany.analizador.lexer.EscanerLexico;
 import com.mycompany.analizador.lexer.TablaRL;
@@ -243,6 +244,7 @@ public class PestañaPrincipal extends javax.swing.JFrame
         menuAbrir = new javax.swing.JMenuItem();
         menuGuardar = new javax.swing.JMenuItem();
         menuVer = new javax.swing.JMenu();
+        menuDepurar = new javax.swing.JMenuItem();
         menuLimpiarConsola = new javax.swing.JMenuItem();
         menuLimpiarResultados = new javax.swing.JMenuItem();
         menuMostrarTraza = new javax.swing.JCheckBoxMenuItem();
@@ -318,6 +320,14 @@ public class PestañaPrincipal extends javax.swing.JFrame
         jMenuBar1.add(menuArchivo);
 
         menuVer.setText("Ver");
+
+        menuDepurar.setText("Modo paso a paso");
+        menuDepurar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDepurarActionPerformed(evt);
+            }
+        });
+        menuVer.add(menuDepurar);
 
         menuLimpiarConsola.setText("Limpiar Consola");
         menuLimpiarConsola.addActionListener(new java.awt.event.ActionListener() {
@@ -428,6 +438,19 @@ public class PestañaPrincipal extends javax.swing.JFrame
         abrirReportes();
     }//GEN-LAST:event_menuVerReportesActionPerformed
 
+    private void menuDepurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDepurarActionPerformed
+        String texto = editorPanel.getTexto();
+        String sugerido = (texto != null && texto.length() > 40) ? texto.substring(0,40) : texto;
+        String entrada = javax.swing.JOptionPane.showInputDialog(this, "Ingresa palabra/fragmento a depurar:", sugerido);
+        if (entrada == null) return; // cancelado
+
+        DialogoDepuracion dlg = new DialogoDepuracion(this, true);
+        dlg.setTitle("Depuración paso a paso");
+        dlg.setLocationRelativeTo(this);
+        dlg.preparar(entrada);
+        dlg.setVisible(true);
+    }//GEN-LAST:event_menuDepurarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnalizar;
     private javax.swing.JTextArea consolaArea;
@@ -440,6 +463,7 @@ public class PestañaPrincipal extends javax.swing.JFrame
     private javax.swing.JMenu menuAnalisis;
     private javax.swing.JMenuItem menuAnalizar;
     private javax.swing.JMenu menuArchivo;
+    private javax.swing.JMenuItem menuDepurar;
     private javax.swing.JMenu menuEditar;
     private javax.swing.JMenuItem menuGuardar;
     private javax.swing.JMenuItem menuLimpiarConsola;

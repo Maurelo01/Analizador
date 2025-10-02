@@ -35,6 +35,14 @@
             <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="Pesta&#xf1;aPrincipal_menuVer"/>
           </AuxValues>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="menuDepurar">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Modo paso a paso"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDepurarActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuLimpiarConsola">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Limpiar Consola"/>
