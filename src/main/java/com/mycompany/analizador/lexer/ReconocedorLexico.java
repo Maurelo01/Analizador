@@ -24,7 +24,7 @@ public class ReconocedorLexico implements Automata
         if (Character.isDigit(c)) return C_DIGITO;
         switch (c)
         {
-            case '+': case '-': case '%': case '=': return C_OPERADOR;
+            case '+': case '-': case '%': case '=': case '!': case '<': case '>': case '&': case '|': return C_OPERADOR;
             case '(': case ')': case '[': case ']': case '{': case '}': return C_AGRUP;
             case ',': case ';': case ':': return C_PUNT;
             case '"': return C_COMILLA;

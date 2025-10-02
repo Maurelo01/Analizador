@@ -109,7 +109,7 @@ class StmtSi extends Stmt
     {
         this.condicion = condicion;
         this.entonces = entonces;
-        this.sino = null;
+        this.sino = sino;
     }
     
     public Expr getCondicion() 
@@ -190,6 +190,31 @@ class ExprNumero extends Expr
         return lexema; 
     }
 }
+
+    class ExprAsign extends Expr 
+    {
+        private final String nombre;
+        private final Expr valor;
+
+        public ExprAsign(String nombre, Expr valor) 
+        {
+            this.nombre = nombre;
+            this.valor = valor;
+        }
+        public String getNombre() 
+        { 
+            return nombre; 
+        }
+        public Expr getValor()
+        { 
+            return valor; 
+        }
+
+        @Override public String toString() 
+        {
+            return "(" + nombre + " = " + valor + ")";
+        }
+    }
 
 class ExprCadena extends Expr 
 {
