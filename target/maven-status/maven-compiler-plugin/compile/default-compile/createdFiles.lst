@@ -1,4 +1,6 @@
 com/mycompany/analizador/ui/PestañaPrincipal.class
+com/mycompany/analizador/ui/PestañaPrincipal$5.class
+com/mycompany/analizador/lexer/Traza.class
 com/mycompany/analizador/lexer/EscanerLexico$Resultado.class
 com/mycompany/analizador/lexer/Automata.class
 com/mycompany/analizador/lexer/TipoToken.class
@@ -8,11 +10,13 @@ com/mycompany/analizador/lexer/Token.class
 com/mycompany/analizador/lexer/TablaRL.class
 com/mycompany/analizador/lexer/EscanerLexico.class
 com/mycompany/analizador/ui/PestañaPrincipal$1.class
+com/mycompany/analizador/ui/PestañaPrincipal$6.class
 com/mycompany/analizador/ui/EditorPanel.class
 com/mycompany/analizador/ui/EditorPanel$1.class
 com/mycompany/analizador/ui/PestañaPrincipal$2.class
 com/mycompany/analizador/util/Colores.class
 com/mycompany/analizador/Analizador.class
+com/mycompany/analizador/ui/PestañaPrincipal$7.class
 com/mycompany/analizador/ui/PestañaPrincipal$4.class
 com/mycompany/analizador/ui/PestañaPrincipal$3.class
 com/mycompany/analizador/lexer/ErrorLexico.class
