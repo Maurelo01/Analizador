@@ -16,6 +16,7 @@ public class PestañaPrincipal extends javax.swing.JFrame
     private EditorPanel editorPanel;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PestañaPrincipal.class.getName());
     private boolean mostrarTraza = false;
+    private Colorizador colorizador;
     
     public PestañaPrincipal() 
     {
@@ -25,6 +26,7 @@ public class PestañaPrincipal extends javax.swing.JFrame
         panelPlaceholder.setLayout(new java.awt.BorderLayout());
         editorPanel = new EditorPanel();
         panelPlaceholder.add(editorPanel, java.awt.BorderLayout.CENTER);
+        colorizador = new Colorizador(editorPanel.getComponenteTexto());
         splitEditorConsola.setResizeWeight(0.8);
         splitPrincipal.setResizeWeight(0.9);
         getContentPane().add(splitPrincipal, java.awt.BorderLayout.CENTER);
@@ -172,6 +174,8 @@ public class PestañaPrincipal extends javax.swing.JFrame
         ev.ejecutarPrograma(prog, (linea) -> consolaArea.append(linea + "\n"));
         consolaArea.append("=== Fin ===\n");
     }
+    
+    
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

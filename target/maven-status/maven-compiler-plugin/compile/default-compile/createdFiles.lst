@@ -2,6 +2,7 @@ com/mycompany/analizador/ui/PestañaPrincipal.class
 com/mycompany/analizador/lexer/EscanerLexico$Resultado.class
 com/mycompany/analizador/lexer/Automata.class
 com/mycompany/analizador/parser/Evaluador.class
+com/mycompany/analizador/ui/Colorizador.class
 com/mycompany/analizador/lexer/ReconocedorLexico.class
 com/mycompany/analizador/lexer/Token.class
 com/mycompany/analizador/lexer/TablaRL.class
@@ -27,6 +28,7 @@ com/mycompany/analizador/lexer/TipoToken.class
 com/mycompany/analizador/parser/ExprNumero.class
 com/mycompany/analizador/lexer/EscanerLexico$ListenerTraza.class
 com/mycompany/analizador/parser/Expr.class
+com/mycompany/analizador/ui/Colorizador$1.class
 com/mycompany/analizador/parser/Evaluador$Entorno.class
 com/mycompany/analizador/parser/StmtPara.class
 com/mycompany/analizador/parser/ExprParen.class
