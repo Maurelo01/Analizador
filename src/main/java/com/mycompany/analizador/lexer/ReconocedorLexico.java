@@ -101,4 +101,9 @@ public class ReconocedorLexico implements Automata
         if (estado >= 0 && estado < tipoPorEstado.length) return tipoPorEstado[estado];
         return null;
     }
+    
+    public boolean esEstadoDeAceptacion(int s) 
+    {
+        return (s >= 0 && s < aceptacion.length) && aceptacion[s];
+    }
 }

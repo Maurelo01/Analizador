@@ -1,6 +1,7 @@
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/Analizador.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/debug/DepuradorModelo.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/debug/DialogoDepuracion.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/debug/VisualizadorAutomata.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/Automata.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/ErrorLexico.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/EscanerLexico.java

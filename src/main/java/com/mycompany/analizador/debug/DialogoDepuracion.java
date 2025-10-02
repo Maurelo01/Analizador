@@ -32,13 +32,12 @@ public class DialogoDepuracion extends javax.swing.JDialog
         String acept = (modelo.getUltimoAceptIdx() >= 0) ? ("Sí (tipo=" + modelo.getUltimoAceptTipo() + ", idx=" + modelo.getUltimoAceptIdx() + ")") : "No";
         lblAceptacion.setText("¿Hubo aceptación?: " + acept);
         StringBuilder sb = new StringBuilder();
-        for (com.mycompany.analizador.debug.DepuradorModelo.Paso p : modelo.getPasos()) 
+        for (DepuradorModelo.Paso p : modelo.getPasos()) 
         {
-            sb.append(String.format("δ(%d, '%s') = %d   lex=\"%s\"%n", p.estadoAntes, p.c, p.estadoDespues, p.lexemaParcial));
+            sb.append(String.format("δ(%d, '%s') = %d   lex=\"%s\"%n", p.estadoAntes, DepuradorModelo.etiquetaChar(p.c), p.estadoDespues, p.lexemaParcial));
         }
         areaTraza.setText(sb.toString());
     }
-    
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -57,6 +56,7 @@ public class DialogoDepuracion extends javax.swing.JDialog
         btnHastaFin = new javax.swing.JButton();
         btnReiniciar = new javax.swing.JButton();
         btnExportar = new javax.swing.JButton();
+        btnSiguienteToken = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -123,6 +123,14 @@ public class DialogoDepuracion extends javax.swing.JDialog
         });
         jPanel2.add(btnExportar);
 
+        btnSiguienteToken.setText("Siguiente token");
+        btnSiguienteToken.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSiguienteTokenActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnSiguienteToken);
+
         getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
 
         pack();
@@ -157,8 +165,36 @@ public class DialogoDepuracion extends javax.swing.JDialog
     }//GEN-LAST:event_btnReiniciarActionPerformed
 
     private void btnExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarActionPerformed
-        
+        try 
+        {
+            javax.swing.JFileChooser ch = new javax.swing.JFileChooser();
+            ch.setDialogTitle("Guardar imagen del camino de estados");
+            ch.setSelectedFile(new java.io.File("camino.png"));
+            if (ch.showSaveDialog(this) != javax.swing.JFileChooser.APPROVE_OPTION) 
+            {
+                return;
+            }
+            java.io.File destino = ch.getSelectedFile();
+            java.awt.image.BufferedImage img = VisualizadorAutomata.dibujarCaminoImagen(modelo.getDfa(), modelo.getPasos());
+            VisualizadorAutomata.guardarPNG(img, null, destino);
+            javax.swing.JOptionPane.showMessageDialog(this, "Imagen guardada en:\n" + destino.getAbsolutePath(), "Listo", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        } 
+        catch (Exception ex) 
+        {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se pudo generar la imagen: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnExportarActionPerformed
+
+    private void btnSiguienteTokenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteTokenActionPerformed
+        if (modelo == null) return;
+        if (!modelo.continuarDesdeUltimaAceptacion()) 
+        {
+            // Si no hubo aceptacion intenta avanzar 1 para no quedar atascados
+            modelo.continuarDesde(modelo.getIndice() + 1);
+        }
+        modelo.saltarEspacios();
+        refrescar();
+    }//GEN-LAST:event_btnSiguienteTokenActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea areaTraza;
@@ -167,6 +203,7 @@ public class DialogoDepuracion extends javax.swing.JDialog
     private javax.swing.JButton btnHastaFin;
     private javax.swing.JButton btnRegresar;
     private javax.swing.JButton btnReiniciar;
+    private javax.swing.JButton btnSiguienteToken;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
