@@ -12,7 +12,9 @@
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/parser/Parser.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/parser/ParserUI.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/parser/Programa.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/ui/BuscadorTexto.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/ui/Colorizador.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/ui/EditorPanel.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/ui/PanelBusqueda.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/ui/PestañaPrincipal.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/util/Colores.java
