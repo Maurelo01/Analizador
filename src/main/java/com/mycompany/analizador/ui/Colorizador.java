@@ -18,7 +18,7 @@ public class Colorizador implements DocumentListener
     private final JTextComponent editor;
     private final Highlighter resaltador;
     private final Timer temporizadorDebounce;
-    private static final int RETARDO_MS = 150;
+    private static final int RETARDO_MS = 10;
     private boolean habilitado = true;
     
     private final Highlighter.HighlightPainter pReservada = new DefaultHighlighter.DefaultHighlightPainter(Colores.RESERVADA);
