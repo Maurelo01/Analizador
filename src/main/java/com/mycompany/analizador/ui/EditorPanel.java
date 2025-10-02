@@ -17,6 +17,11 @@ public class EditorPanel extends javax.swing.JPanel
         textPane.setCaretPosition(0);
     }
     
+    public javax.swing.text.JTextComponent getComponenteTexto() 
+    {
+        return textPane; 
+    }
+    
     public javax.swing.JLabel getEtiquetaPosicion() // acceso al label de posicion
     {
         return posLabel;

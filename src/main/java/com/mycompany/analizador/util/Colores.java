@@ -13,4 +13,5 @@ public final class Colores
     public static final Color OPERADOR = new Color(255, 255, 153); // amarillo
     public static final Color AGRUPACION = new Color(102, 0, 153); // morado
     public static final Color ERROR = Color.RED; // rojo
+    public static final Color RESALTADOR = new Color(238, 255, 238); // rojo
 }
