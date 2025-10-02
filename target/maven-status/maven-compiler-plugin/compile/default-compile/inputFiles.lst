@@ -7,6 +7,11 @@
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/TipoToken.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/Token.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/lexer/Traza.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/parser/Evaluador.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/parser/FlujoToken.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/parser/Parser.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/parser/ParserUI.java
+/home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/parser/Programa.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/ui/EditorPanel.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/ui/PestañaPrincipal.java
 /home/mauricio/Escritorio/Tarea/LFP/Analizador/src/main/java/com/mycompany/analizador/util/Colores.java

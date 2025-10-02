@@ -49,130 +49,61 @@ public class Parser
         Token t = flujo.revisar();
         if (t == null) return null;
 
-        // ESCRIBIR (expresion)
-        if (t.getTipo() == TipoToken.RESERVADA && ("ESCRIBIR".equals(t.getLexema()) || "escribir".equals(t.getLexema()))) 
-        {
-            flujo.consumir(); // consumir la palabra reservada
-            if (!coincideLexema("(")) 
-            {
-                error(conMensaje(t, "Se esperaba '(' después de ESCRIBIR"));
-                if (")".equals(String.valueOf(flujo.revisar() != null ? flujo.revisar().getLexema() : ""))) 
-                {                   
-                    flujo.consumir();
-                }
-            }
-
-            Expr valor = analizarExpresion();
-
-            if (!coincideLexema(")")) 
-            {
-                error(conMensaje(flujo.revisar(), "Se esperaba ')' para cerrar ESCRIBIR"));
-                sincronizarHasta(";", ")"); // evitar cascada de errores
-            }
-            return new StmtEscribir(valor);
-        }
-        // Bloque { ... }
+        // 1) Bloque
         if ("{".equals(t.getLexema())) 
         {
             return analizarBloque();
         }
-        // SI (...) ENTONCES ...
-        if (t.getTipo() == TipoToken.RESERVADA && ("SI".equals(t.getLexema()) || "si".equals(t.getLexema()))) 
+
+        // 2) PARA 
+        if (t.getTipo() == TipoToken.RESERVADA && ("PARA".equals(t.getLexema()) || "para".equals(t.getLexema()))) 
         {
-            flujo.consumir(); // SI
-
-            // Condicion entre parentesis: ( expresion )
-            if (!coincideLexema("(")) 
-            {
-                error(conMensaje(flujo.revisar(), "Se esperaba '(' después de SI"));
-            }
-            Expr condicion = analizarExpresion();
-            if (!coincideLexema(")")) 
-            {
-                error(conMensaje(flujo.revisar(), "Se esperaba ')' para cerrar la condición de SI"));
-                sincronizarHasta(";", "ENTONCES", "entonces", "{", ")"); // evita cascada
-            }
-
-            // ENTONCES obligatorio
-            Token despues = flujo.revisar();
-            if (!(despues != null && despues.getTipo() == TipoToken.RESERVADA && ("ENTONCES".equals(despues.getLexema()) || "entonces".equals(despues.getLexema())))) 
-            {
-                error(conMensaje(despues, "Se esperaba 'ENTONCES' después de la condición"));
-            } 
-            else 
-            {
-                flujo.consumir(); // ENTONCES
-            }
-            // o bien { ... } o bien una sola sentencia
-            Stmt cuerpoEntonces;
-            Token prox = flujo.revisar();
-            if (prox != null && "{".equals(prox.getLexema())) 
-            {
-                cuerpoEntonces = analizarBloque();
-            } 
-            else 
-            {
-                cuerpoEntonces = analizarSentencia();
-                // admitir ; tras una sentencia simple
-                if (flujo.revisar() != null && ";".equals(flujo.revisar().getLexema())) 
-                {
-                    flujo.consumir();
-                }
-            }
-            // SINO opcional
-            Stmt cuerpoSino = null;
-            Token tokSino = flujo.revisar();
-            if (tokSino != null && tokSino.getTipo() == TipoToken.RESERVADA && ("SINO".equals(tokSino.getLexema()) || "sino".equals(tokSino.getLexema())))
-            {
-                flujo.consumir(); // SINO
-                Token proxSino = flujo.revisar();
-                if (proxSino != null && "{".equals(proxSino.getLexema())) 
-                {
-                    cuerpoSino = analizarBloque();
-                } 
-                else 
-                {
-                    cuerpoSino = analizarSentencia();
-                    // ; opcional tras el cuerpo del SINO
-                    if (flujo.revisar() != null && ";".equals(flujo.revisar().getLexema())) 
-                    {
-                        flujo.consumir();
-                    }
-                }
-                // Si no se pudo construir nada se crea bloque vacio para que  no se rompa
-                if (cuerpoSino == null) 
-                {
-                    error(conMensaje(flujo.revisar(), "Se esperaba una sentencia o bloque después de SINO"));
-                    cuerpoSino = new StmtBloque();
-                }
-            }
-
-            return new StmtSi(condicion, cuerpoEntonces, cuerpoSino);
+            return analizarSentenciaPara();
         }
-        
+
+        // 3) SI ENTONCES 
         if (t.getTipo() == TipoToken.RESERVADA && ("SI".equals(t.getLexema()) || "si".equals(t.getLexema()))) 
         {
             return analizarSentenciaSi();
         }
-        if (t.getTipo() == TipoToken.RESERVADA && ("PARA".equals(t.getLexema()) || "para".equals(t.getLexema()))) 
-        {            
-            return analizarSentenciaPara();
+
+        // 4) ESCRIBIR
+        if (t.getTipo() == TipoToken.RESERVADA && ("ESCRIBIR".equals(t.getLexema()) || "escribir".equals(t.getLexema()))) 
+        {
+            flujo.consumir(); // ESCRIBIR
+            if (!coincideLexema("(")) 
+            {
+                error(conMensaje(t, "Se esperaba '(' después de ESCRIBIR"));
+                if (")".equals(String.valueOf(flujo.revisar() != null ? flujo.revisar().getLexema() : ""))) 
+                {
+                    flujo.consumir(); // tolerancia si venía ')'
+                }
+            }
+            Expr valor = analizarExpresion();
+            if (!coincideLexema(")")) 
+            {
+                error(conMensaje(flujo.revisar(), "Se esperaba ')' para cerrar ESCRIBIR"));
+                sincronizarHasta(";", ")"); 
+            }
+            return new StmtEscribir(valor);
         }
-        // Asignacion IDENTIFICADOR = expresion
+
+        // 5) Asignacion IDENT = expresion
         if (t.getTipo() == TipoToken.IDENTIFICADOR) 
         {
             String nombre = t.getLexema();
-            flujo.consumir(); // IDENTIFICADOR
+            flujo.consumir(); // IDENT
             if (!coincideLexema("=")) 
             {
                 error(conMensaje(flujo.revisar(), "Se esperaba '=' en la asignación"));
-                sincronizarHasta(";"); // saltar hasta fin de sentencia
+                sincronizarHasta(";"); 
                 return null;
             }
             Expr valor = analizarExpresion();
             return new StmtAsignar(nombre, valor);
         }
-        // Nada valido entoces rror y sincronizar
+
+        // 6) Error
         error(conMensaje(t, "Sentencia no reconocida cerca de '" + t.getLexema() + "'"));
         sincronizarHasta(";");
         return null;
@@ -371,7 +302,7 @@ public class Parser
     
     private Expr analizarExpresion() 
     {
-        return analizarExprAd();
+        return analizarAsignacion();
     }
     
     private Expr analizarExprAd()  // exprAd := exprMul ( (+ | -) exprMul )*
@@ -390,9 +321,9 @@ public class Parser
     private Expr analizarExprMul() 
     {
         Expr izquierda = analizarExprUn();
-        while (coincideLexema("*", "/", "%")) 
+        String op;
+        while ((op = leerOperadorMul()) != null) 
         {
-            String op = ultimoLexemaConsumido();
             Expr derecha = analizarExprUn();
             izquierda = new ExprBinaria(izquierda, op, derecha);
         }
@@ -402,13 +333,82 @@ public class Parser
     // exprUn := (+ | -) exprUn | primaria
     private Expr analizarExprUn() 
     {
-        if (coincideLexema("+", "-")) 
+        if (coincideLexema("!", "+", "-")) 
         {
             String op = ultimoLexemaConsumido();
             Expr expr = analizarExprUn();
             return new ExprUnaria(op, expr);
         }
         return analizarPrimaria();
+    }
+    
+    // asignacion := IDENT = asignacion | exprOr
+    private Expr analizarAsignacion() 
+    {
+        Token a = flujo.revisar();
+        Token b = flujo.revisar(1);
+        Token c = flujo.revisar(2);
+        if (a != null && a.getTipo() == TipoToken.IDENTIFICADOR && b != null && "=".equals(b.getLexema()) && !(c != null && "=".equals(c.getLexema()))) 
+        {
+            String nombre = a.getLexema();
+            flujo.consumir(); // IDENT
+            flujo.consumir(); // '='
+            Expr valor = analizarAsignacion(); // right-associative
+            return new ExprAsign(nombre, valor);
+        }
+        return analizarExprOr();
+    }
+    
+    // OR := AND ( '||' AND )*
+    private Expr analizarExprOr()
+    {
+        Expr izq = analizarExprAnd();
+        String op;
+        while ((op = leerOperadorOr()) != null) 
+        {
+            Expr der = analizarExprAnd();
+            izq = new ExprBinaria(izq, op, der);
+        }
+        return izq;
+    }
+
+    // AND := IGUALDAD ( '&&' IGUALDAD )*
+    private Expr analizarExprAnd() 
+    {
+        Expr izq = analizarExprIgualdad();
+        String op;
+        while ((op = leerOperadorAnd()) != null) 
+        {
+            Expr der = analizarExprIgualdad();
+            izq = new ExprBinaria(izq, op, der);
+        }
+        return izq;
+    }
+
+    // IGUALDAD := COMPARACION ( ('==' | '!=') COMPARACION )*
+    private Expr analizarExprIgualdad()
+    {
+        Expr izq = analizarExprComparacion();
+        String op;
+        while ((op = leerOperadorIgualdad()) != null) 
+        {
+            Expr der = analizarExprComparacion();
+            izq = new ExprBinaria(izq, op, der);
+        }
+        return izq;
+    }
+
+    // COMPARACION := AD ( (< | <= | > | >=) AD )*
+    private Expr analizarExprComparacion() 
+    {
+        Expr izq = analizarExprAd();
+        String op;
+        while ((op = leerOperadorComparacion()) != null) 
+        {
+            Expr der = analizarExprAd();
+            izq = new ExprBinaria(izq, op, der);
+        }
+        return izq;
     }
     
     // primaria := NUMERO | DECIMAL | CADENA | IDENTIFICADOR | "(" expresion ")"
@@ -502,5 +502,85 @@ public class Parser
     {
         if (t == null) return base + " (EOF)";
         return String.format("%s @%d:%d", base, t.getFila(), t.getColumna());
+    }
+    
+    private String leerOperadorOr() 
+    {
+        Token a = flujo.revisar(), b = flujo.revisar(1);
+        if (a != null && b != null && "|".equals(a.getLexema()) && "|".equals(b.getLexema())) 
+        {
+            flujo.consumir(); flujo.consumir();
+            return "||";
+        }
+        return null;
+    }
+
+    private String leerOperadorAnd() 
+    {
+        Token a = flujo.revisar(), b = flujo.revisar(1);
+        if (a != null && b != null && "&".equals(a.getLexema()) && "&".equals(b.getLexema())) 
+        {
+            flujo.consumir(); flujo.consumir();
+            return "&&";
+        }
+        return null;
+    }
+    
+    private String leerOperadorMul() 
+    {
+        Token t = flujo.revisar();
+        if (t == null) return null;
+        String lx = t.getLexema();
+        if ("*".equals(lx) || "/".equals(lx) || "%".equals(lx)) 
+        {
+            flujo.consumir();
+            return lx;
+        }
+        return null;
+    }
+
+    private String leerOperadorIgualdad() 
+    {
+        Token a = flujo.revisar(), b = flujo.revisar(1);
+        if (a != null && b != null) 
+        {
+            if ("=".equals(a.getLexema()) && "=".equals(b.getLexema())) 
+            { 
+                flujo.consumir(); flujo.consumir(); return "=="; 
+            }
+            if ("!".equals(a.getLexema()) && "=".equals(b.getLexema())) 
+            { 
+                flujo.consumir(); flujo.consumir(); return "!="; 
+            }
+        }
+        return null;
+    }
+
+    private String leerOperadorComparacion() 
+    {
+        Token a = flujo.revisar(), b = flujo.revisar(1);
+        if (a == null) return null;
+        String la = a.getLexema();
+
+        // <= , >=
+        if (b != null) 
+        {
+            String lb = b.getLexema();
+            if ("<".equals(la) && "=".equals(lb)) 
+            { 
+                flujo.consumir(); flujo.consumir(); return "<="; 
+            }
+            if (">".equals(la) && "=".equals(lb)) 
+            { 
+                flujo.consumir(); flujo.consumir(); return ">="; 
+            }
+        }
+        // < , >
+        if ("<".equals(la) || ">".equals(la)) 
+        {
+            flujo.consumir();
+            return la;
+        }
+        return null;
     }
 }

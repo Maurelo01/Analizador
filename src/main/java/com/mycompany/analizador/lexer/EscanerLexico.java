@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class EscanerLexico // Recorrera el texto y emitira tokens/errores
 {
-    public static final String[] RESERVADAS = {"SI","si","ENTONCES","entonces","PARA","para","ESCRIBIR","escribir"};
+    public static final String[] RESERVADAS = {"SI","si","ENTONCES","entonces","PARA","para","ESCRIBIR","escribir", "SINO", "sino"};
     public static class Resultado // Resultados del analisis
     {
         public final List<Token> tokens = new ArrayList<>();
@@ -115,9 +115,6 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
                             { 
                                 j++; 
                             }
-                            int[] pos = avanzarPosicion(texto, i, j, fila, col);
-                            fila = pos[0]; 
-                            col = pos[1];
                             i = j; // continuar desde el fin del comentario
                             continue; // saltar emision
                         } 
@@ -140,21 +137,22 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
                             }
                             if (!cerrado)
                             {
-                                r.errores.add(new ErrorLexico("/", inicioFila, inicioCol, "Comentario de bloque sin cerrar"));
-                                if (listener != null) listener.onError(r.errores.get(r.errores.size()-1));
+                                ErrorLexico err = new ErrorLexico("/", inicioFila, inicioCol, "Comentario de bloque sin cerrar");
+                                r.errores.add(err);
+                                if (listener != null) listener.onError(err);
                                 i = texto.length();
                                 break;
                             } 
                             else 
                             {
-                                int[] pos2 = avanzarPosicion(texto, i, k, fila, col);
-                                fila = pos2[0]; 
-                                col  = pos2[1];
                                 i = k;
                                 continue;
                             }
                         }
                     }
+                    Token t = new Token(TipoToken.OPERADOR, lexema, inicioFila, inicioCol);
+                    r.tokens.add(t);
+                    if (listener != null) listener.onToken(t);
                 }
                 else if (tipoAcept == TipoToken.NUMERO) 
                 {
@@ -165,12 +163,13 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
                         {
                             r.errores.add(new ErrorLexico(".", fila, col, "Decimal incompleto"));
                             if (listener != null) listener.onError(r.errores.get(r.errores.size()-1));
-                            int[] posP = avanzarPosicion(texto, j, j+1, fila, col);
-                            fila = posP[0]; col = posP[1];
                             i = j + 1;
                             continue;
                         }
                     }
+                    Token t = new Token(TipoToken.NUMERO, lexema, inicioFila, inicioCol);
+                    r.tokens.add(t);
+                    if (listener != null) listener.onToken(t);
                 }
                 else if (tipoAcept == TipoToken.PUNTUACION && ".".equals(lexema))
                 {

@@ -5,6 +5,10 @@ import com.mycompany.analizador.lexer.EscanerLexico;
 import com.mycompany.analizador.lexer.TablaRL;
 import com.mycompany.analizador.lexer.Token;
 import com.mycompany.analizador.lexer.Traza;
+import com.mycompany.analizador.parser.Evaluador;
+import com.mycompany.analizador.parser.Parser;
+import com.mycompany.analizador.parser.ParserUI;
+import com.mycompany.analizador.parser.Programa;
 import javax.swing.JOptionPane;
 
 public class PestañaPrincipal extends javax.swing.JFrame 
@@ -119,6 +123,54 @@ public class PestañaPrincipal extends javax.swing.JFrame
         {
             JOptionPane.showMessageDialog(this, "Error durante el análisis: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+    private void analizarEjecutar() 
+    {
+        resultadosArea.setText("");
+        consolaArea.append("=== Analizando ===\n");
+
+        String src = editorPanel.getTexto();
+
+        // Léxico
+        EscanerLexico sc = new EscanerLexico();
+        sc.setAutomata(TablaRL.crear());
+        EscanerLexico.Resultado res = sc.analizar(src);
+
+        if (!res.errores.isEmpty()) 
+        {
+            consolaArea.append("Errores léxicos: " + res.errores.size() + "\n");
+            for (com.mycompany.analizador.lexer.ErrorLexico e : res.errores) 
+            {
+                consolaArea.append(String.format("  [%d:%d] %s (lexema='%s')\n", e.getFila(), e.getColumna(), e.getDescripcion(), e.getLexema()));
+            }
+        } 
+        else 
+        {
+            consolaArea.append("Léxico OK. Tokens: " + res.tokens.size() + "\n");
+        }
+
+        // Parser
+        Parser p = new Parser(res.tokens);
+        Programa prog = p.analizarPrograma();
+
+        if (!p.getErrores().isEmpty()) 
+        {
+            consolaArea.append("Errores sintácticos: " + p.getErrores().size() + "\n");
+            for (String s : p.getErrores()) consolaArea.append("  - " + s + "\n");
+        } 
+        else 
+        {
+            consolaArea.append("Parser OK.\n");
+        }
+        
+        ParserUI pu = new ParserUI();
+        resultadosArea.setText(pu.imprimir(prog));
+
+        // Ejecutar
+        Evaluador ev = new Evaluador();
+        ev.ejecutarPrograma(prog, (linea) -> consolaArea.append(linea + "\n"));
+        consolaArea.append("=== Fin ===\n");
     }
     
     @SuppressWarnings("unchecked")
@@ -273,10 +325,12 @@ public class PestañaPrincipal extends javax.swing.JFrame
 
     private void menuAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAnalizarActionPerformed
         ejecutarAnalisis();
+        analizarEjecutar();
     }//GEN-LAST:event_menuAnalizarActionPerformed
 
     private void btnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarActionPerformed
         ejecutarAnalisis();
+        analizarEjecutar();
     }//GEN-LAST:event_btnAnalizarActionPerformed
 
     private void menuMostrarTrazaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuMostrarTrazaActionPerformed
