@@ -1,8 +1,18 @@
 package com.mycompany.analizador.ui;
+
+import com.mycompany.analizador.lexer.ErrorLexico;
+import com.mycompany.analizador.lexer.EscanerLexico;
+import com.mycompany.analizador.lexer.TablaRL;
+import com.mycompany.analizador.lexer.Token;
+import com.mycompany.analizador.lexer.Traza;
+import javax.swing.JOptionPane;
+
 public class PestañaPrincipal extends javax.swing.JFrame 
 {
     private EditorPanel editorPanel;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PestañaPrincipal.class.getName());
+    private boolean mostrarTraza = false;
+    
     public PestañaPrincipal() 
     {
         initComponents();
@@ -60,10 +70,63 @@ public class PestañaPrincipal extends javax.swing.JFrame
             }
         }
     }
+    
+    private void ejecutarAnalisis() 
+    {
+        try 
+        {
+            final String texto = editorPanel.getTexto();
+
+            // Configurar escaner
+            EscanerLexico sc = new EscanerLexico();
+            sc.setAutomata(TablaRL.crear());
+            Traza traza = null;
+            if (mostrarTraza)
+            {
+                traza = new Traza();
+                sc.setListener(traza);  
+            }
+            else
+            {
+                sc.setListener(null);
+            }
+            // Analizar
+            EscanerLexico.Resultado res = sc.analizar(texto);
+
+            // Tokens
+            StringBuilder sbTok = new StringBuilder();
+            sbTok.append(String.format("Tokens: %d%n", res.tokens.size()));
+            for (Token t : res.tokens) 
+            {
+                sbTok.append(String.format("%-12s '%s'\t@%d:%d%n", t.getTipo(), t.getLexema(), t.getFila(), t.getColumna()));
+            }
+            resultadosArea.setText(sbTok.toString());
+
+            // Errores
+            StringBuilder sbErr = new StringBuilder();
+            sbErr.append(String.format("Errores: %d%n", res.errores.size()));
+            for (ErrorLexico e : res.errores) 
+            {
+                sbErr.append(String.format("[%d:%d] %s (lexema='%s')%n", e.getFila(), e.getColumna(), e.getDescripcion(), e.getLexema()));
+            }
+            if (mostrarTraza && traza != null)
+            {
+                sbErr.append("\n--- TRAZA ---\n").append(traza.basura());
+            }
+            consolaArea.setText(sbErr.toString());
+        } 
+        catch (Exception ex) 
+        {
+            JOptionPane.showMessageDialog(this, "Error durante el análisis: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jToolBar1 = new javax.swing.JToolBar();
+        btnAnalizar = new javax.swing.JButton();
         splitPrincipal = new javax.swing.JSplitPane();
         splitEditorConsola = new javax.swing.JSplitPane();
         panelPlaceholder = new javax.swing.JPanel();
@@ -78,10 +141,28 @@ public class PestañaPrincipal extends javax.swing.JFrame
         menuVer = new javax.swing.JMenu();
         menuLimpiarConsola = new javax.swing.JMenuItem();
         menuLimpiarResultados = new javax.swing.JMenuItem();
+        menuMostrarTraza = new javax.swing.JCheckBoxMenuItem();
+        menuAnalisis = new javax.swing.JMenu();
+        menuAnalizar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(430, 340));
         setPreferredSize(new java.awt.Dimension(430, 340));
+
+        jToolBar1.setRollover(true);
+
+        btnAnalizar.setText("Analizar");
+        btnAnalizar.setFocusable(false);
+        btnAnalizar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnAnalizar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnAnalizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAnalizarActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnAnalizar);
+
+        getContentPane().add(jToolBar1, java.awt.BorderLayout.NORTH);
 
         splitPrincipal.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
@@ -146,7 +227,28 @@ public class PestañaPrincipal extends javax.swing.JFrame
         });
         menuVer.add(menuLimpiarResultados);
 
+        menuMostrarTraza.setText("Mostrar Traza");
+        menuMostrarTraza.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuMostrarTrazaActionPerformed(evt);
+            }
+        });
+        menuVer.add(menuMostrarTraza);
+
         jMenuBar1.add(menuVer);
+
+        menuAnalisis.setText("Análisis");
+
+        menuAnalizar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
+        menuAnalizar.setText("Analizar (F5)");
+        menuAnalizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuAnalizarActionPerformed(evt);
+            }
+        });
+        menuAnalisis.add(menuAnalizar);
+
+        jMenuBar1.add(menuAnalisis);
 
         setJMenuBar(jMenuBar1);
 
@@ -169,16 +271,33 @@ public class PestañaPrincipal extends javax.swing.JFrame
         consolaArea.setText("");
     }//GEN-LAST:event_menuLimpiarConsolaActionPerformed
 
+    private void menuAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAnalizarActionPerformed
+        ejecutarAnalisis();
+    }//GEN-LAST:event_menuAnalizarActionPerformed
+
+    private void btnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarActionPerformed
+        ejecutarAnalisis();
+    }//GEN-LAST:event_btnAnalizarActionPerformed
+
+    private void menuMostrarTrazaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuMostrarTrazaActionPerformed
+        mostrarTraza = menuMostrarTraza.isSelected();
+    }//GEN-LAST:event_menuMostrarTrazaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAnalizar;
     private javax.swing.JTextArea consolaArea;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JMenuItem menuAbrir;
+    private javax.swing.JMenu menuAnalisis;
+    private javax.swing.JMenuItem menuAnalizar;
     private javax.swing.JMenu menuArchivo;
     private javax.swing.JMenuItem menuGuardar;
     private javax.swing.JMenuItem menuLimpiarConsola;
     private javax.swing.JMenuItem menuLimpiarResultados;
+    private javax.swing.JCheckBoxMenuItem menuMostrarTraza;
     private javax.swing.JMenu menuVer;
     private javax.swing.JPanel panelPlaceholder;
     private javax.swing.JTextArea resultadosArea;

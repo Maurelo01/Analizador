@@ -53,12 +53,14 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
         int i = 0;
         while (i < texto.length())
         {
+            int iPrev = i; // toma el valor de inicio de cada repeticion
             automata.reiniciar();
             StringBuilder lex = new StringBuilder();
             int inicioFila = fila, inicioCol = col;
             int ultimoAceptIdx = -1;
             TipoToken tipoAcept = null;
             int j = i;
+            
             while (j < texto.length())
             {
                 char c = texto.charAt(j);
@@ -78,14 +80,17 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
                 }
                 if (listener != null) listener.onPaso(estadoAntes, c, automata.estadoActual());
                 j++;
+                
             }
             if (ultimoAceptIdx >= i)
             {
                 // Retroceso donde se devuelve lo leido despues del ultimo aceptado
                 int regreso = j - (ultimoAceptIdx + 1);
-                while (regreso-- > 0)
+                if (regreso > 0) 
                 {
-                    char cR = texto.charAt(--j);
+                    int[] pos = ajustarPosicionDeRegreso(texto, j - 1, ultimoAceptIdx, fila, col);
+                    fila = pos[0]; col = pos[1];
+                    j = ultimoAceptIdx + 1;
                 }
                 String lexema = lex.substring(0, (ultimoAceptIdx - i) + 1);
                 if (tipoAcept == null || tipoAcept == TipoToken.COMENTARIO)
@@ -110,6 +115,9 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
                             { 
                                 j++; 
                             }
+                            int[] pos = avanzarPosicion(texto, i, j, fila, col);
+                            fila = pos[0]; 
+                            col = pos[1];
                             i = j; // continuar desde el fin del comentario
                             continue; // saltar emision
                         } 
@@ -139,6 +147,9 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
                             } 
                             else 
                             {
+                                int[] pos2 = avanzarPosicion(texto, i, k, fila, col);
+                                fila = pos2[0]; 
+                                col  = pos2[1];
                                 i = k;
                                 continue;
                             }
@@ -154,6 +165,8 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
                         {
                             r.errores.add(new ErrorLexico(".", fila, col, "Decimal incompleto"));
                             if (listener != null) listener.onError(r.errores.get(r.errores.size()-1));
+                            int[] posP = avanzarPosicion(texto, j, j+1, fila, col);
+                            fila = posP[0]; col = posP[1];
                             i = j + 1;
                             continue;
                         }
@@ -179,6 +192,8 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
                     {
                         r.errores.add(new ErrorLexico(".", fila, col, "Formato decimal inválido"));
                         if (listener != null) listener.onError(r.errores.get(r.errores.size()-1));
+                        int[] posP2 = avanzarPosicion(texto, ultimoAceptIdx, ultimoAceptIdx+1, fila, col);
+                        fila = posP2[0]; col = posP2[1];
                         i = ultimoAceptIdx + 1;
                         continue;
                     }
@@ -252,18 +267,73 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
                         i = texto.length();
                         break;
                     }
-                    ErrorLexico err = new ErrorLexico(String.valueOf(c), fila, col, desc);
-                    r.errores.add(err);
-                    if (listener != null) listener.onError(err);
-                    // avanzar un caracter
-                    if (c == '\n') { fila++; col = 1; }
-                    else if (c == '\t') { col += 4; }
-                    else { col++; }
-                    i++;
+                    int k = i + 1;
+                    while (k < texto.length())
+                    {
+                        char ck = texto.charAt(k);
+                        if (Character.isWhitespace(ck)) 
+                        { 
+                            k++; 
+                            break; 
+                        }
+                        if ("+-=%,;:()[]{}\"/".indexOf(ck) >= 0 || ck == '.') { break; }
+                        k++;
+                    }
+                    r.errores.add(new ErrorLexico(String.valueOf(c), fila, col, desc));
+                    if (listener != null) listener.onError(r.errores.get(r.errores.size()-1));
+                    while (i < k) 
+                    {
+                        char adv = texto.charAt(i++);
+                        if (adv == '\n') 
+                        {
+                            fila++;
+                            col = 1;
+                        }
+                        else if (adv == '\t') 
+                        {
+                            col += 4;
+                        } 
+                        else 
+                        {
+                            col++;
+                        }
+                    }
+                    continue;
                 }
+            }
+            if (i == iPrev) 
+            {
+                char c = texto.charAt(i);
+                if (c == '\n') { fila++; col = 1; }
+                else if (c == '\t') { col += 4; }
+                else { col++; }
+                i++;
             }
         }
         return r;
+    }
+    
+    private int[] ajustarPosicionDeRegreso(CharSequence texto, int desdeExcl, int hastaIncl, int fila, int col) 
+    {
+        // Recorre hacia atrás devolviendo la nueva (fila, col)
+        for (int k = desdeExcl; k > hastaIncl; k--) 
+        {
+            char c = texto.charAt(k);
+            if (c == '\n') 
+            {
+                fila = Math.max(1, fila - 1);
+                col = 1;
+            } 
+            else if (c == '\t') 
+            {
+                col = Math.max(1, col - 4);
+            } 
+            else 
+            {
+                col = Math.max(1, col - 1);
+            }
+        }
+        return new int[]{fila, col};
     }
     
     private boolean esReservada(String lexema) 
@@ -293,5 +363,27 @@ public class EscanerLexico // Recorrera el texto y emitira tokens/errores
             return rl.tipoDeAceptacion(rl.estadoActual());
         }
         return null;
+    }
+    
+    private int[] avanzarPosicion(CharSequence texto, int desdeIncl, int hastaExcl, int fila, int col) 
+    {
+        for (int p = desdeIncl; p < hastaExcl; p++) 
+        {
+            char c = texto.charAt(p);
+            if (c == '\n') 
+            { 
+                fila++; 
+                col = 1; 
+            }
+            else if (c == '\t') 
+            { 
+                col += 4; 
+            }
+            else 
+            { 
+                col++; 
+            }
+        }
+        return new int[]{fila, col};
     }
 }
